@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --surface-page: #fafafa;
+    --surface-page-blur: rgba(250, 250, 250, 0.85);
+    --surface-card: #ffffff;
+    --surface-subtle: #f4f4f5;
+    --surface-hover: #f7f7f8;
+    --text-primary: #09090b;
+    --text-primary-hover: #27272a;
+    --text-secondary: #52525b;
+    --text-muted: #a1a1aa;
+    --border-hairline: #e4e4e7;
+    --border-strong: #c8c8cd;
+    --grid-line: #ececee;
+    --series-1: #2a78d6;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+    --surface-page: #000000;
+    --surface-page-blur: rgba(0, 0, 0, 0.85);
+    --surface-card: #0a0a0a;
+    --surface-subtle: #141416;
+    --surface-hover: #17171a;
+    --text-primary: #fafafa;
+    --text-primary-hover: #e4e4e7;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --border-hairline: #232326;
+    --border-strong: #3f3f46;
+    --grid-line: #1e1e21;
+    --series-1: #3987e5;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface-page text-ink-primary font-sans antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-series ring-offset-2;
+    --tw-ring-offset-color: var(--surface-page);
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-hairline bg-surface-card;
+  }
+
+  .section-label {
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-hairline
+           px-3 py-1.5 text-[13px] font-medium text-ink-secondary transition-colors
+           hover:bg-surface-hover hover:text-ink-primary
+           disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
+  }
+
+  .btn-primary {
+    @apply border-transparent bg-ink-primary text-surface-card
+           hover:bg-ink-primary-hover hover:text-surface-card;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Recharts injects its own focus outline on the wrapper; we handle focus ourselves. */
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
