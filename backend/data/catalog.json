@@ -7,6 +7,8 @@
     { "handle": "gift-sets", "title": "Gift Sets" }
   ],
   "products": [
+    { "title": "Gift Card", "type": "Gift Card", "vendor": "Lumen Labs", "price": 50.0, "sku": "GFT-CRD-50", "inventory": 0, "giftCard": true },
+    { "title": "Made-to-Order Candle", "type": "Home", "vendor": "Nightfall", "price": 44.0, "sku": "MTO-CDL-01", "inventory": 0, "tracked": false },
     { "title": "Aurora Hydrating Serum", "type": "Skincare", "vendor": "Lumen Labs", "price": 48.0, "sku": "AUR-SER-30", "inventory": 3 },
     { "title": "Midnight Recovery Oil", "type": "Skincare", "vendor": "Lumen Labs", "price": 62.0, "sku": "MID-OIL-30", "inventory": 7 },
     { "title": "Daily Mineral Sunscreen SPF 50", "type": "Skincare", "vendor": "Lumen Labs", "price": 34.0, "sku": "DLY-SPF-50", "inventory": 128 },

@@ -55,10 +55,18 @@ const PRODUCTS_QUERY = `
         status
         vendor
         productType
+        isGiftCard
         totalInventory
         featuredImage { url altText }
         variants(first: 20) {
-          nodes { id title sku inventoryQuantity price }
+          nodes {
+            id
+            title
+            sku
+            inventoryQuantity
+            price
+            inventoryItem { tracked }
+          }
         }
       }
     }
@@ -132,6 +140,7 @@ const normalizeProduct = (node) => ({
   status: node.status,
   vendor: node.vendor || '—',
   productType: node.productType || '—',
+  isGiftCard: node.isGiftCard === true,
   image: node.featuredImage?.url || null,
   totalInventory: node.totalInventory ?? 0,
   price: Number(node.variants.nodes[0]?.price ?? 0),
@@ -141,6 +150,9 @@ const normalizeProduct = (node) => ({
     sku: v.sku || '—',
     price: Number(v.price ?? 0),
     inventoryQuantity: v.inventoryQuantity ?? 0,
+    // Shopify reports 0 for variants it does not track (gift cards, made-to-order).
+    // Without this flag those look permanently out of stock.
+    tracked: v.inventoryItem?.tracked ?? true,
   })),
 });
 

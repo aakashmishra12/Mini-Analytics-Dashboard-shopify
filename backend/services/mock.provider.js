@@ -33,6 +33,7 @@ function buildProducts() {
       status: 'ACTIVE',
       vendor: p.vendor,
       productType: p.type,
+      isGiftCard: p.giftCard === true,
       image: placeholderImage(p.title),
       totalInventory: p.inventory,
       price: p.price,
@@ -43,6 +44,7 @@ function buildProducts() {
           sku: p.sku,
           price: p.price,
           inventoryQuantity: p.inventory,
+          tracked: p.tracked !== false,
         },
       ],
     };

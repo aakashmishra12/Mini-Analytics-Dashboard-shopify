@@ -35,11 +35,22 @@ export function topSellingProducts(orders, limit = 5) {
     .slice(0, limit);
 }
 
+/**
+ * Two kinds of variant report a quantity of 0 without actually being out of
+ * stock, and both must stay out of stock reporting:
+ *   - untracked variants (made-to-order), where Shopify keeps no count
+ *   - gift cards, which are generated at purchase and never restocked;
+ *     note these still report tracked: true, so the flag alone misses them
+ * An absent flag means tracked, so mock and partial fixtures behave sensibly.
+ */
+const holdsStock = (product, variant) => variant.tracked !== false && !product.isGiftCard;
+
 export function lowInventoryVariants(products, { threshold = 10, criticalThreshold = 5 } = {}) {
   const rows = [];
 
   for (const product of products) {
     for (const variant of product.variants) {
+      if (!holdsStock(product, variant)) continue;
       if (variant.inventoryQuantity >= threshold) continue;
       rows.push({
         productId: product.id,
@@ -89,6 +100,7 @@ export function inventoryDistribution(products, { threshold = 10, criticalThresh
 
   for (const product of products) {
     for (const variant of product.variants) {
+      if (!holdsStock(product, variant)) continue;
       const qty = variant.inventoryQuantity;
       if (qty <= 0) outOfStock += 1;
       if (qty < criticalThreshold) buckets.critical += 1;

@@ -79,6 +79,7 @@ const product = (title, variants) => ({
     sku: v.sku ?? `${title}-${i}`,
     price: 10,
     inventoryQuantity: v.qty,
+    ...(v.tracked === undefined ? {} : { tracked: v.tracked }),
   })),
 });
 
@@ -100,6 +101,48 @@ test('lowInventoryVariants flags stock below the critical threshold', () => {
   const rows = lowInventoryVariants(products);
 
   assert.deepEqual(rows.map((r) => [r.inventory, r.critical]), [[0, true], [4, true], [5, false]]);
+});
+
+test('lowInventoryVariants ignores variants Shopify does not track', () => {
+  const products = [
+    product('Made to Order', [{ qty: 0, tracked: false }]),
+    product('Serum', [{ qty: 2, tracked: true }]),
+  ];
+
+  const rows = lowInventoryVariants(products);
+
+  assert.deepEqual(rows.map((r) => r.productName), ['Serum']);
+});
+
+// Gift cards report tracked: true, so they need excluding on their own flag.
+test('lowInventoryVariants ignores gift cards despite them reporting as tracked', () => {
+  const giftCard = { ...product('Gift Card', [{ qty: 0, tracked: true }]), isGiftCard: true };
+  const products = [giftCard, product('Serum', [{ qty: 2 }])];
+
+  const rows = lowInventoryVariants(products);
+
+  assert.deepEqual(rows.map((r) => r.productName), ['Serum']);
+});
+
+test('lowInventoryVariants treats a missing tracked flag as tracked', () => {
+  const products = [product('Serum', [{ qty: 1 }])];
+
+  assert.equal(lowInventoryVariants(products).length, 1);
+});
+
+test('inventoryDistribution excludes untracked variants and gift cards from every bucket', () => {
+  const giftCard = { ...product('Gift Card', [{ qty: 0 }, { qty: 0 }]), isGiftCard: true };
+  const products = [
+    giftCard,
+    product('Made to Order', [{ qty: 0, tracked: false }]),
+    product('Serum', [{ qty: 2 }, { qty: 40 }]),
+  ];
+
+  const { buckets, outOfStock } = inventoryDistribution(products);
+  const counts = Object.fromEntries(buckets.map((b) => [b.bucket, b.count]));
+
+  assert.equal(outOfStock, 0);
+  assert.deepEqual(counts, { Critical: 1, Low: 0, Healthy: 1 });
 });
 
 test('lowInventoryVariants respects custom thresholds', () => {
