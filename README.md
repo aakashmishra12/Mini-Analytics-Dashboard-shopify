@@ -297,8 +297,12 @@ its error state with a working retry.
 
 ## Deployment
 
-Both halves deploy free. See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for step-by-step
-instructions (Vercel for the frontend, Render for the backend).
+Deploys free on Render as a single service: `npm run build` produces the React
+bundle and Express serves it alongside the API from one origin, so there is one
+URL to share and no CORS to configure. The repo includes a `render.yaml`
+blueprint. Splitting the frontend onto Vercel is also supported.
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for both paths.
 
 ---
 

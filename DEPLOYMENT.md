@@ -1,46 +1,98 @@
 # Deployment
 
-Both halves of this app deploy on free tiers. The recommended pairing:
+Two options. Pick the first unless you have a reason not to.
 
-| Part | Platform | Free tier |
-|---|---|---|
-| Frontend (React/Vite) | **Vercel** | Generous, no sleep, custom domain |
-| Backend (Express/SQLite) | **Render** | 750 hrs/month; sleeps after 15 min idle |
+| | Services | URL to share | CORS |
+|---|---|---|---|
+| **A — Single service (recommended)** | 1 on Render | one | none needed |
+| B — Split hosting | Render + Vercel | frontend's | must be configured |
 
-Total cost: **$0**.
+Both are free. Option A is simpler to set up and gives one link that serves the
+whole dashboard; Express serves the built React app alongside the API from the
+same origin. Option B keeps the frontend on Vercel's always-on CDN, which
+avoids the cold start described below, at the cost of a second service and CORS
+configuration.
 
-> **Why not both on Vercel?** Vercel's serverless functions have an ephemeral
+> **Why not Vercel for the backend?** Its serverless functions have an ephemeral
 > filesystem, so the SQLite cache would be wiped between invocations. Render runs a
-> normal long-lived Node process, which the cache needs. Alternatives that also work:
-> Railway, Fly.io, Koyeb, or Cyclic.
-
----
-
-## Deploy order
-
-Deploy the **backend first** — you need its URL to configure the frontend, then come
-back and set the backend's `CORS_ORIGIN` to the frontend's URL.
+> normal long-lived Node process. Railway, Fly.io and Koyeb work too.
 
 ---
 
 ## Step 1 — Push to GitHub
 
 ```bash
-git init
-git add .
-git commit -m "Mini Analytics Dashboard"
-git branch -M main
-git remote add origin https://github.com/<you>/mini-analytics-dashboard.git
-git push -u origin main
+gh auth login          # once, if you have not already
+gh repo create mini-analytics-dashboard --public --source=. --remote=origin --push
 ```
 
-Confirm `.env` files are **not** in the repo:
+Confirm no `.env` file was included:
 
 ```bash
 git ls-files | grep -c "\.env$"   # must print 0
 ```
 
 ---
+
+# Option A — Single service on Render
+
+The repo already contains `render.yaml` describing this setup, so Render can
+configure itself.
+
+1. Go to [render.com](https://render.com) and sign in with GitHub.
+2. **New +** → **Blueprint**, then pick the repository. Render reads
+   `render.yaml` and fills in the build and start commands.
+3. When prompted, supply the two secrets marked `sync: false`:
+
+   | Key | Value |
+   |---|---|
+   | `SHOPIFY_STORE_DOMAIN` | `your-store.myshopify.com` |
+   | `SHOPIFY_ADMIN_ACCESS_TOKEN` | your `shpat_…` token |
+
+   To publish a demo on seeded data instead, set `USE_MOCK_DATA` to `true` and
+   leave both blank.
+4. **Apply** and wait for the first build. It installs both workspaces, builds
+   the frontend to `frontend/dist`, and starts Express, which detects the build
+   and serves it.
+
+Verify:
+
+```bash
+curl https://mini-analytics-dashboard.onrender.com/api/health
+```
+
+Then open the same URL in a browser — that is the dashboard, and the link you share.
+
+### Setting it up by hand instead
+
+If you would rather not use the blueprint: **New +** → **Web Service**, connect the
+repo, leave **Root Directory** blank, and set
+
+| Field | Value |
+|---|---|
+| **Build Command** | `npm install && npm run build` |
+| **Start Command** | `npm start` |
+| **Health Check Path** | `/api/health` |
+| **Instance Type** | Free |
+
+plus the environment variables listed in `render.yaml`.
+
+### The cold start
+
+Free instances sleep after 15 minutes idle, and the next request takes roughly
+30–50 seconds while the container wakes. Before demoing, open the URL a minute
+ahead. To keep it warm, point a free pinger such as UptimeRobot at
+`/api/health` every 10 minutes.
+
+The SQLite cache lives on an ephemeral disk, so it resets on redeploy or wake.
+That is harmless: it is a cache, and it repopulates on the first request.
+
+---
+
+# Option B — Split hosting
+
+Deploy the **backend first**; you need its URL to configure the frontend, then come
+back and set `CORS_ORIGIN` to the frontend's URL.
 
 ## Step 2 — Backend on Render
 
@@ -54,7 +106,7 @@ git ls-files | grep -c "\.env$"   # must print 0
    | **Name** | `mini-analytics-api` |
    | **Region** | Closest to you |
    | **Branch** | `main` |
-   | **Root Directory** | `backend` |
+   | **Root Directory** | `backend` (API only — no frontend is built) |
    | **Runtime** | Node |
    | **Build Command** | `npm install` |
    | **Start Command** | `npm start` |
@@ -138,9 +190,11 @@ CORS_ORIGIN = https://your-project.vercel.app,https://www.yourdomain.com
 
 ---
 
-## Step 5 — Verify the deployment
+---
 
-Open the Vercel URL and confirm:
+# Verifying either option
+
+Open the deployed URL (Render's for option A, Vercel's for option B) and confirm:
 
 - [ ] KPI cards show numbers
 - [ ] Both charts render

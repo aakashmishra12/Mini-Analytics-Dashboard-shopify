@@ -1,23 +1,26 @@
+# One service serves the API and the built dashboard from the same origin, so
+# there is a single URL to share and no CORS to configure.
 services:
   - type: web
-    name: mini-analytics-api
+    name: mini-analytics-dashboard
     runtime: node
     plan: free
-    rootDir: backend
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: USE_MOCK_DATA
-        value: "true"
       - key: CACHE_TTL_MINUTES
         value: "15"
-      # Set to the deployed frontend origin once Vercel is live.
+      # Same origin, so CORS never comes into play. Left permissive in case the
+      # frontend is later split onto its own host.
       - key: CORS_ORIGIN
         value: "*"
-      # Add these in the Render dashboard, not here.
+      # Set to "true" to run the public demo on seeded data instead of a real store.
+      - key: USE_MOCK_DATA
+        value: "false"
+      # Add the real values in the Render dashboard. Never commit them.
       - key: SHOPIFY_STORE_DOMAIN
         sync: false
       - key: SHOPIFY_ADMIN_ACCESS_TOKEN
