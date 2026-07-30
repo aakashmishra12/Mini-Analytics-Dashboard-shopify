@@ -70,7 +70,7 @@ repo, leave **Root Directory** blank, and set
 
 | Field | Value |
 |---|---|
-| **Build Command** | `npm install && npm run build` |
+| **Build Command** | `npm install --include=dev && npm run build` |
 | **Start Command** | `npm start` |
 | **Health Check Path** | `/api/health` |
 | **Instance Type** | Free |
@@ -211,10 +211,18 @@ If sections show the error state, check in order:
 
 | Symptom | Likely cause |
 |---|---|
+| **The URL shows JSON, not the dashboard** | Express found no `frontend/dist`. On option A the service must have **Root Directory blank** and build with `npm install --include=dev && npm run build`. A service left on `Root Directory: backend` only ever builds the API. |
+| **Build fails, `vite: not found`** | Build command missing `--include=dev`. `NODE_ENV=production` makes npm skip devDependencies, and Vite is one. |
+| **`"dataSource":"mock"` when you wanted live** | `USE_MOCK_DATA` is `true`, or the two Shopify variables are unset. The app falls back to seeded data rather than failing when credentials are absent. |
 | "Cannot reach the API" | `VITE_API_BASE_URL` wrong, or Render service asleep — wait 40s and retry |
 | CORS error in console | `CORS_ORIGIN` doesn't exactly match the Vercel origin |
 | First load very slow | Free-tier cold start; expected |
 | `SHOPIFY_AUTH_FAILED` | Token wrong or missing scopes — see the README |
+
+> **Editing an existing service.** `render.yaml` is only read when a service is
+> created from a Blueprint. If you made the service by hand, the dashboard
+> settings win and changing the file has no effect — update **Settings → Build &
+> Deploy** directly, then **Manual Deploy → Clear build cache & deploy**.
 
 ---
 

@@ -5,7 +5,9 @@ services:
     name: mini-analytics-dashboard
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build
+    # --include=dev is required: NODE_ENV=production makes npm omit
+    # devDependencies, and Vite lives there, so the build would fail without it.
+    buildCommand: npm install --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
