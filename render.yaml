@@ -1,8 +1,13 @@
 # One service serves the API and the built dashboard from the same origin, so
 # there is a single URL to share and no CORS to configure.
+#
+# The name must keep matching the service already running on Render: blueprint
+# entries are matched by name, and renaming one orphans the existing service
+# instead of updating it. Note there is deliberately no rootDir, because the
+# build has to reach both workspaces.
 services:
   - type: web
-    name: mini-analytics-dashboard
+    name: mini-analytics-api
     runtime: node
     plan: free
     # --include=dev is required: NODE_ENV=production makes npm omit
