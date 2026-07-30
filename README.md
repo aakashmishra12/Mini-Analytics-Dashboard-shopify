@@ -1,5 +1,13 @@
 # Mini Analytics Dashboard
 
+### ▶︎ Live demo: **https://mini-analytics-api.onrender.com**
+
+Running against a real Shopify store via the Admin GraphQL API. Hosted on a free
+instance, so if it has been idle the first request takes 30–50 seconds to wake it —
+after that it is immediate.
+
+---
+
 A small full-stack analytics dashboard for a D2C Shopify brand. It pulls store data
 from the **Shopify Admin GraphQL API**, caches it in the backend, and renders key
 business metrics so the marketing team never has to open Shopify Admin.

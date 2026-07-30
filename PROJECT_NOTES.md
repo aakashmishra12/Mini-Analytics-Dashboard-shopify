@@ -72,8 +72,12 @@ Shopify's own reporting uses.
 ## What is working
 
 Verified against a live store, `purple-beauty-zvme6kjr.myshopify.com`, on
-30 July 2026. Current contents: 17 products, 4 orders, 6 customers,
-3 collections, $9,534.55 revenue.
+30 July 2026. Current contents: 17 products, 9 orders, 9 customers,
+3 collections, $16,695.26 revenue.
+
+It is deployed and running at
+[mini-analytics-api.onrender.com](https://mini-analytics-api.onrender.com), one
+Render service where Express serves the built React app next to the API.
 
 Everything in the required spec is done:
 
