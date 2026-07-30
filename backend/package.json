@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "test": "node --test \"tests/**/*.test.js\""
+    "test": "node --test \"tests/**/*.test.js\"",
+    "check:shopify": "node scripts/check-shopify.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
