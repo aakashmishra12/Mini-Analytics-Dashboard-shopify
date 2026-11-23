@@ -39,9 +39,9 @@ on the back end.
 
 ## Features
 
-### Required
+### Core
 
-| Requirement | Status |
+| Feature | Status |
 |---|---|
 | KPI cards — products, orders, customers, collections | Done |
 | Latest 10 orders (number, customer, total, payment, fulfillment, date) | Done |
@@ -52,9 +52,9 @@ on the back end.
 | Loading spinner, empty state, error state | Done |
 | Mobile responsive layout | Done |
 
-### Bonus (5 of the 8 optional items)
+### Extras
 
-| Bonus | How it shows up |
+| Extra | How it shows up |
 |---|---|
 | **Charts** | Orders by day (14-day bar chart) and inventory distribution by stock level |
 | **Dark mode** | Toggle in the header, remembered across reloads, no flash on load |
