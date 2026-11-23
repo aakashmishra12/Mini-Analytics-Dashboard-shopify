@@ -1,6 +1,6 @@
 # Project Notes
 
-Written for whoever reviews this. The README covers installation and the API
+The README covers installation and the API
 reference lives in `API.md`, so this file sticks to two things: what I picked
 and why, and what actually works right now.
 
@@ -10,8 +10,8 @@ and why, and what actually works right now.
 
 **Backend — Node 24 + Express 4.**
 
-No ORM and no database beyond a SQLite file. The assignment listed a database
-as optional, and for this workload a real one would be dead weight: nothing
+No ORM and no database beyond a SQLite file.
+For this workload a real one would be dead weight: nothing
 here is user-generated, and every value on screen is a projection of what
 Shopify already owns. What the app genuinely needs is a cache, so that is what
 I built. `better-sqlite3` writes one snapshot row that survives a restart, with
@@ -24,7 +24,7 @@ maintaining a parallel stylesheet for a single page is busywork. Recharts is
 the one dependency I went back and forth on. It ships a lot of code for two
 charts, and the bundle warning in the build output is entirely its fault. I
 kept it because writing responsive SVG charts by hand would have cost more time
-than it saved, and the charts were a bonus item worth having.
+than it saved, and the charts were worth having.
 
 **Tests — the built-in `node:test` runner.**
 
@@ -59,7 +59,7 @@ dashboard before I had store credentials, and the demo still runs for anyone
 who clones the repo without a Shopify account. The header shows a badge saying
 which mode is active, so there is no ambiguity about what you are looking at.
 
-Queries are GraphQL, not REST, as the spec preferred. Products, orders,
+Queries are GraphQL, not REST. Products, orders,
 customers and collections are fetched with cursor pagination, then reduced
 locally in `backend/utils/analytics.js`.
 
@@ -71,7 +71,7 @@ Shopify's own reporting uses.
 
 ## What is working
 
-Verified against a live store, `purple-beauty-zvme6kjr.myshopify.com`, on
+Verified against a live store on
 30 July 2026. Current contents: 17 products, 9 orders, 9 customers,
 3 collections, $16,695.26 revenue.
 
@@ -79,9 +79,9 @@ It is deployed and running at
 [mini-analytics-api.onrender.com](https://mini-analytics-api.onrender.com), one
 Render service where Express serves the built React app next to the API.
 
-Everything in the required spec is done:
+Everything in the core feature set is done:
 
-| Requirement | Status |
+| Feature | Status |
 | --- | --- |
 | KPI cards (products, orders, customers, collections) | Working, live |
 | Latest 10 orders with all six fields | Working, live |
@@ -94,7 +94,7 @@ Everything in the required spec is done:
 | Loading, empty and error states | All three, per section |
 | Mobile responsive | Tables scroll horizontally under 640px |
 
-The spec asked for any two bonus items. Six are in:
+Six extras are in:
 
 - Charts — orders by day (14 day line) and inventory distribution (bar)
 - Dark mode — system preference on first load, toggle persists to localStorage
@@ -103,8 +103,8 @@ The spec asked for any two bonus items. Six are in:
 - Pagination — server side on orders and products
 - Response caching — SQLite, 15 minute TTL
 
-Not done: date range filter, and authentication. Both were on the optional
-list. Auth in particular felt wrong to bolt on without knowing who the users
+Not done: date range filter, and authentication.
+Auth in particular felt wrong to bolt on without knowing who the users
 would be.
 
 ## One thing worth flagging
@@ -132,7 +132,7 @@ version was right.
 
 ## Folder structure
 
-Matches the layout in the brief:
+Base layout:
 
 ```
 frontend/src/{components,pages,services}    backend/{routes,controllers,services,middleware,utils}
