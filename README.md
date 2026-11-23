@@ -61,7 +61,7 @@ on the back end.
 | **Skeleton loading** | Per-section skeletons on refresh and pagination |
 | **Export orders to CSV** | Export button on the orders table, honours the active search |
 | **Pagination** | On the orders and inventory tables |
-| **API response caching** | SQLite-backed snapshot cache with a TTL (also a core requirement) |
+| **API response caching** | SQLite-backed snapshot cache with a TTL |
 
 ---
 
